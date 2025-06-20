@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Signup</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h2>Create Your Profile</h2>
+  <form id="signupForm">
+    <input type="text" id="firstName" placeholder="First Name" required /><br />
+    <input type="text" id="lastName" placeholder="Last Name" required /><br />
+    <input type="text" id="mobileNo" placeholder="Mobile Number" required /><br />
+    <input type="text" id="user_name" placeholder="Username" required /><br />
+    <input type="email" id="emailId" placeholder="Email ID" required /><br />
+    <input type="number" id="age" placeholder="Age" required /><br />
+    <input type="number" id="annualSalary" placeholder="Annual Salary" required /><br />
+    <input type="text" id="occupation" placeholder="Occupation" required /><br />
+    <button type="submit">Create Profile</button>
+  </form>
+
+
+  <p>Already have an account? <a href="index.html">Login here</a></p> <!-- ✅ Login link -->
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const payload = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        mobileNo: document.getElementById("mobileNo").value,
+        user_name: document.getElementById("user_name").value,
+        emailId: document.getElementById("emailId").value,
+        age: parseInt(document.getElementById("age").value),
+        annualSalary: parseFloat(document.getElementById("annualSalary").value),
+        occupation: document.getElementById("occupation").value
+      };
+
+      fetch("http://localhost:8080/api/user/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message); // message from GeneralResponse
+      })
+      .catch(err => {
+        console.error("Signup failed:", err);
+        alert("Signup failed. Try again.");
+      });
+    });
+  </script>
+</body>
+</html>
