@@ -4,46 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
-  <link rel="stylesheet" href="style.css" /> <!-- 👈 Link your CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- 👇 Wrap in styled container -->
   <div class="login-container">
     <h2>Login</h2>
     <form id="loginForm">
       <input type="number" id="userId" placeholder="Enter User ID" required />
       <button type="submit">Login</button>
-      <div class="error" id="error"></div> <!-- for displaying login errors -->
+      <div id="error" class="error"></div>
     </form>
   </div>
 
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const userId = parseInt(document.getElementById("userId").value);
-
-      fetch("http://localhost:8080/api/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_id: userId })
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Login failed");
-        return res.json();
-      })
-      .then(data => {
-        localStorage.setItem("token", data.token);
-        window.location.href = "profile.html";
-      })
-      .catch(err => {
-        document.getElementById("error").innerText = "Login failed: " + err.message;
-      });
-    });
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
