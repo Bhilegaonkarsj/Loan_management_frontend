@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <h2>Welcome, <span id="userName">User</span></h2>
+
+    <h3>Available Loan Schemes</h3>
+
+    <div class="loan-cards">
+      <div class="loan-card" onclick="showLoanDetails('home')">
+        <h4>🏠 Home Loan</h4>
+        <p>Up to ₹50L @ 8.5% interest</p>
+      </div>
+      <div class="loan-card" onclick="showLoanDetails('education')">
+        <h4>🎓 Education Loan</h4>
+        <p>Up to ₹20L @ 7.1% interest</p>
+      </div>
+      <div class="loan-card" onclick="showLoanDetails('personal')">
+        <h4>👤 Personal Loan</h4>
+        <p>Up to ₹10L @ 10.5% interest</p>
+      </div>
+      <div class="loan-card" onclick="showLoanDetails('vehicle')">
+        <h4>🚗 Vehicle Loan</h4>
+        <p>Up to ₹15L @ 9.2% interest</p>
+      </div>
+    </div>
+
+    <div class="loan-details" id="loanDetails">
+      <p>Select a loan scheme to view more details.</p>
+    </div>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
