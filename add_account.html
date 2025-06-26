@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Bank Account</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <h2>Add Bank Account</h2>
+    <form id="addAccountForm">
+ 
+
+      <div class="form-group">
+        <label for="accountNumber">Account Number</label>
+        <input type="text" id="accountNumber" required />
+      </div>
+
+      <div class="form-group">
+        <label for="initialBalance">Initial Balance</label>
+        <input type="number" id="initialBalance" required />
+      </div>
+
+      <div class="form-group">
+        <label for="currency">Currency</label>
+        <input type="text" id="currency" value="INR" required />
+      </div>
+
+      <div class="form-group">
+        <label for="bankId">Bank ID</label>
+        <input type="number" id="bankId" required />
+      </div>
+
+      <button type="submit">Create Account</button>
+      <div class="error" id="error" style="color: red; margin-top: 10px;"></div>
+    </form>
+  </div>
+
+  <script src="add_account.js"></script>
+</body>
+</html>

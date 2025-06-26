@@ -16,8 +16,11 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     })
     .then((data) => {
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user_id", userId); // store the userId you sent
+      localStorage.setItem("userId", userId); // store the userId you sent
       localStorage.setItem("user_name", data.user_name || "User");
+
+
+      console.log(localStorage.getItem('userId'));
 
       window.location.href = "dashboard.html";
     })

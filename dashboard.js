@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("user_id");
+  const userId = localStorage.getItem("userId");
+  console.log(localStorage.getItem('userId'));
 
   if (!token || !userId) {
     alert("Please log in first.");
@@ -46,3 +47,84 @@ document.addEventListener("DOMContentLoaded", function () {
       window.location.href = "index.html";
     });
 });
+
+
+
+// function showLoanDetails(type) {
+//   const token = localStorage.getItem("token");
+//   const userId = localStorage.getItem("user_id");
+//   const loanDetails = document.getElementById("loanDetails");
+
+//   if (!token || !userId) {
+//     alert("Please login again.");
+//     window.location.href = "index.html";
+//     return;
+//   }
+
+//   fetch("http://localhost:8080/api/loan/check", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       "userId": userId,
+//       "token": token
+//     },
+//     body: JSON.stringify({
+//       userId: parseInt(userId),
+//       loanType: type.toUpperCase()
+//     })
+//   })
+//     .then(res => res.json())
+//     .then(resp => {
+//       if (resp.exists) {
+//         const loan = resp.loan;
+//         loanDetails.innerHTML = `
+//           <h4>${type.toUpperCase()} Loan Details</h4>
+//           <p><strong>Loan Amount:</strong> ₹${loan.amount}</p>
+//           <p><strong>Status:</strong> ${loan.status}</p>
+//           <p><strong>Interest Rate:</strong> ${loan.interestRate}%</p>
+//         `;
+//       } else {
+//         loanDetails.innerHTML = `
+//           <h4>Apply for ${type.toUpperCase()} Loan</h4>
+//           <form id="loanForm">
+//             <label>Loan Amount (₹):</label><br/>
+//             <input type="number" id="amount" required /><br/><br/>
+//             <label>Tenure (Years):</label><br/>
+//             <input type="number" id="tenure" required /><br/><br/>
+//             <button type="submit">Apply</button>
+//           </form>
+//         `;
+
+//         document.getElementById("loanForm").addEventListener("submit", function (e) {
+//           e.preventDefault();
+//           const amount = document.getElementById("amount").value;
+//           const tenure = document.getElementById("tenure").value;
+
+//           fetch("http://localhost:8080/api/loan/apply", {
+//             method: "POST",
+//             headers: {
+//               "Content-Type": "application/json",
+//               "userId": userId,
+//               "token": token
+//             },
+//             body: JSON.stringify({
+//               userId: parseInt(userId),
+//               loanType: type.toUpperCase(),
+//               amount: parseFloat(amount),
+//               tenure: parseInt(tenure)
+//             })
+//           })
+//             .then(res => res.json())
+//             .then(data => {
+//               loanDetails.innerHTML = `<p style="color:green;">Loan Applied Successfully!</p>`;
+//             })
+//             .catch(err => {
+//               loanDetails.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+//             });
+//         });
+//       }
+//     })
+//     .catch(err => {
+//       loanDetails.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+//     });
+// }

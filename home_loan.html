@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Home Loan</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dashboard-page">
+  <div class="dashboard-wrapper">
+    <main class="dashboard-main">
+      <h2>🏠 Home Loan</h2>
+      <section id="loanDetails" class="loan-details">
+        <!-- Loan info or form goes here -->
+      </section>
+      <button onclick="goBack()">← Back</button>
+    </main>
+    <aside class="dashboard-sidebar">
+      <!-- your sidebar content -->
+    </aside>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+      const details = document.getElementById('loanDetails');
+console.log("userId in home loan check :"+userId);
+      fetch('http://localhost:8080/api/loans/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'userId': userId,
+          'token': token
+        },
+        body: JSON.stringify({ userId: +userId, loanType: 'HOME' })
+      })
+      .then(r => r.json())
+      .then(resp => {
+        if (resp.exists) {
+          const l = resp.loan;
+          details.innerHTML = `
+            <h3>Your Home Loan</h3>
+            <p><strong>Amount:</strong> ₹${l.amount}</p>
+            <p><strong>Status:</strong> ${l.status}</p>
+            <p><strong>Interest:</strong> ${l.interestRate}%</p>
+          `;
+        } else {
+          details.innerHTML = `
+            <h3>Apply for Home Loan</h3>
+            <form id="applyForm">
+              <label>Loan Amount (₹):</label><br/>
+              <input type="number" id="amount" required><br/><br/>
+
+              <label>Total Repayable Amount (₹):</label><br/>
+              <input type="number" id="totalAmount" required><br/><br/>
+
+              <label>Reason:</label><br/>
+              <textarea id="reason" rows="3" required></textarea><br/><br/>
+
+              <button type="submit">Apply</button>
+            </form>
+          `;
+
+          // Attach submit handler AFTER form is added
+          document.getElementById('applyForm').addEventListener('submit', e => {
+            e.preventDefault();
+
+            const payload = {
+              userId: +userId,
+              loanType: 'HOME',
+              reason: document.getElementById('reason').value,
+              loanAmount: parseFloat(document.getElementById('amount').value),
+              totalAmount: parseFloat(document.getElementById('totalAmount').value)
+            };
+
+            fetch('http://localhost:8080/api/loans/apply', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'userId': userId,
+                'token': token
+              },
+              body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(d => {
+              document.getElementById('loanDetails').innerHTML =
+                `<p style="color:green;">${d.message || 'Loan applied successfully!'}</p>`;
+            })
+            .catch(err => {
+              document.getElementById('loanDetails').innerHTML =
+                `<p style="color:red;">Error: ${err.message}</p>`;
+            });
+          });
+        }
+      });
+    });
+
+    function goBack() {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>
