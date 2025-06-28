@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Transaction Summary</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .chart-container {
+      width: 100%;
+      max-width: 500px;   /* 👈 Smaller chart */
+      height: 300px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .filter-info {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .clear-btn {
+      margin-left: 10px;
+      padding: 2px 8px;
+      background: #d33;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📊 Transaction Summary by Loan Type</h2>
+
+  <div class="chart-container">
+    <canvas id="loanChart"></canvas>
+  </div>
+
+  <div class="filter-info" id="filterInfo"></div>
+
+  <table id="transactionTable">
+    <thead>
+      <tr>
+        <th>Transaction ID</th>
+        <th>Account</th>
+        <th>Amount</th>
+        <th>Timestamp</th>
+        <th>Loan Type</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const userId = localStorage.getItem('userId') || 52;
+    const token = localStorage.getItem('token') || '';
+    let fullData = {};
+    let chart;
+
+    const ctx = document.getElementById('loanChart').getContext('2d');
+
+    function renderTable(transactions) {
+      const tbody = document.querySelector("#transactionTable tbody");
+      tbody.innerHTML = "";
+      transactions.forEach(txn => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${txn.transactionId}</td>
+          <td>${txn.accountNumber || 'N/A'}</td>
+          <td>₹${txn.transactionAmount}</td>
+          <td>${txn.transactionTimestamp}</td>
+          <td>${txn.loanType}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function renderChart(dataCounts) {
+      const labels = Object.keys(dataCounts);
+      const counts = Object.values(dataCounts);
+
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Transaction Count',
+            data: counts,
+            backgroundColor: '#4e79a7'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (e, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              const selectedLoanType = labels[index];
+              const txns = fullData[selectedLoanType] || [];
+              document.getElementById("filterInfo").innerHTML = `
+                Showing transactions for: <strong>${selectedLoanType}</strong>
+                <button class="clear-btn" onclick="resetTable()">Clear</button>
+              `;
+              renderTable(txns);
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function resetTable() {
+      document.getElementById("filterInfo").innerHTML = "";
+      const allTxns = Object.values(fullData).flat();
+      renderTable(allTxns);
+    }
+
+    fetch("http://localhost:8080/api/payments/transactions/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "userId": userId,
+        "token": token
+      },
+      body: JSON.stringify({ userId: +userId, accountIds: [] })
+    })
+    .then(res => res.json())
+    .then(response => {
+      fullData = response.data || {};
+      const txns = Object.values(fullData).flat();
+
+      const counts = {};
+      for (const loanType in fullData) {
+        counts[loanType] = fullData[loanType].length;
+      }
+
+      renderChart(counts);
+      renderTable(txns);
+    })
+    .catch(err => {
+      console.error("Error fetching summary:", err);
+      alert("Error loading data.");
+    });
+  </script>
+
+</body>
+</html>

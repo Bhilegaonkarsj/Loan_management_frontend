@@ -1,14 +1,142 @@
-<h2>User Profile</h2>
-<div id="profileContainer"></div>
-<a href="apply-loan.html">Apply for a Loan</a> |
-<a href="loan-list.html">View My Loans</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Profile</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="profile-page">
+  <div class="profile-container">
+    <h2>👤 User Profile</h2>
 
-<script>
-  fetch("http://localhost:8080/api/users/me", {
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") }
-  })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("profileContainer").innerText = JSON.stringify(data);
-  });
-</script>
+    <div class="profile-box">
+      <!-- <img id="profilePic" src="default-avatar.png" alt="Profile Picture" class="profile-avatar"/> -->
+
+
+      <img id="profilePic" alt="Profile Picture" class="profile-avatar" width="120" height="120" />
+
+      <input type="file" id="profileUpload" accept="image/*" />
+
+
+      <script>
+        document.getElementById("profileUpload").addEventListener("change", function () {
+          const file = this.files[0];
+      
+          if (!file) return;
+      
+          const reader = new FileReader();
+      
+          reader.onloadend = function () {
+            const base64String = reader.result.split(',')[1];  // remove prefix
+            sendImageToBackend(base64String); // call function to upload
+          };
+      
+          reader.readAsDataURL(file); // convert file to base64
+        });
+      
+        function sendImageToBackend(base64Image) {
+          const userId = localStorage.getItem("userId");
+          const token = localStorage.getItem("token");
+      
+          fetch("http://localhost:8080/api/user/save/image", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "userId": userId,
+              "token": token
+            },
+            body: JSON.stringify({
+              userId: +userId,
+              profileImage: base64Image
+            })
+          })
+          .then(res => res.json())
+          .then(response => {
+            alert("Image uploaded successfully!");
+          })
+          .catch(err => {
+            console.error("Upload error:", err);
+            alert("Failed to upload image.");
+          });
+        }
+      </script>
+      
+      
+      <div class="profile-info">
+        <p><strong>Name:</strong> <span id="profileName">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="profileEmail">Loading...</span></p>
+        <p><strong>Mobile:</strong> <span id="profileMobile">Loading...</span></p>
+        <p><strong>Occupation:</strong> <span id="profileOccupation">Loading...</span></p>
+      </div>
+    </div>
+
+    <button onclick="goBack()">← Back to Dashboard</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    // Fetch user details
+    fetch("http://localhost:8080/api/user/details", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "userId": userId,
+        "token": token
+      },
+      body: JSON.stringify({ userId: +userId })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const user = data.data;
+      console.log("Full Data :", data);
+
+
+      let base64Image = user.userImage;
+
+//       console.log("Base64 string from backend:", user.profileImage);
+// console.log("Length:", user.profileImage.length);
+if (base64Image) {
+  // Auto detect type if needed, or assume PNG
+  const prefix = base64Image.startsWith("data:image")
+    ? ""
+    : "data:image/jpg;base64,";
+
+  document.getElementById("profilePic").src = prefix + base64Image;
+} else {
+  document.getElementById("profilePic").src = "default-avatar.png"; // fallback
+}
+
+
+
+      document.getElementById("profileName").innerText = `${user.firstName} ${user.lastName}`;
+      document.getElementById("profileEmail").innerText = user.emailId;
+      document.getElementById("profileMobile").innerText = user.mobileNumber;
+      document.getElementById("profileOccupation").innerText = user.occupation || "N/A";
+    })
+    .catch(err => {
+      alert("Failed to load profile. Please log in again.");
+      localStorage.clear();
+      window.location.href = "index.html";
+    });
+
+    // Preview profile image
+    document.getElementById("profileUpload").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById("profilePic").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function goBack() {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>

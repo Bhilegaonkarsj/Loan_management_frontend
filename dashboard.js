@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+
+
   fetch("http://localhost:8080/api/user/details", {
     method: "POST",
     headers: {
@@ -49,6 +51,49 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+// const token = localStorage.getItem("token");
+//   const userId = localStorage.getItem("userId");
+
+  const profileIcon = document.getElementById("profileIcon");
+  const profileDropdown = document.getElementById("profileDropdown");
+
+  profileIcon.addEventListener("click", () => {
+    profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+  });
+
+  // Fetch user details
+  fetch("http://localhost:8080/api/user/details", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "userId": userId,
+      "token": token
+    },
+    body: JSON.stringify({ userId: +userId })
+  })
+    .then(res => res.json())
+    .then(response => {
+      const user = response.data;
+      document.getElementById("profileName").innerText = `${user.firstName} ${user.lastName}`;
+      document.getElementById("profileEmail").innerText = user.emailId;
+      document.getElementById("profileMobile").innerText = user.mobileNumber;
+      document.getElementById("profileOccupation").innerText = user.occupation;
+    })
+    .catch(err => {
+      console.error("Error fetching profile:", err);
+    });
+
+  // Optional: Handle image preview
+  document.getElementById("profileUpload").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        profileIcon.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
 // function showLoanDetails(type) {
 //   const token = localStorage.getItem("token");

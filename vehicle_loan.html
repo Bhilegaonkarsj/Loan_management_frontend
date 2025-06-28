@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Home Loan</title>
+  <title>Vehicle Loan</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dashboard-page">
   <div class="dashboard-wrapper">
     <main class="dashboard-main">
-      <h2>🏠 Home Loan</h2>
+      <h2>🏠 Vehicle Loan</h2>
       <section id="loanDetails" class="loan-details">
         <!-- Loan info or form goes here -->
       </section>
@@ -24,7 +24,7 @@
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const details = document.getElementById('loanDetails');
-    console.log("userId in home loan check :" + userId);
+    console.log("userId in vehicle loan check :" + userId);
   
     fetch('http://localhost:8080/api/loans/check', {
       method: 'POST',
@@ -33,7 +33,7 @@
         'userId': userId,
         'token': token
       },
-      body: JSON.stringify({ userId: +userId, loanType: 'HOME' })
+      body: JSON.stringify({ userId: +userId, loanType: 'VEHICLE' })
     })
     .then(r => r.json())
     .then(resp => {
@@ -46,7 +46,7 @@
         const remaining = l.remianingAmount || 0;
         const percent = loanAmount > 0 ? Math.round((paid / loanAmount) * 100) : 0;
         details.innerHTML = `
-        <h3>Your Home Loan</h3>
+        <h3>Your Vehicle Loan</h3>
 
   <div class="loan-bar-wrapper">
     <div class="loan-bar-label top-right">Total: ₹${l.totalAmountForLoan}</div>
@@ -204,7 +204,7 @@
 
   const payload = {
     userId: +userId,
-    loanType: 'HOME', // or HOME / EDUCATION depending on page
+    loanType: 'VEHICLE', // or HOME / EDUCATION depending on page
     reason: document.getElementById('reason').value,
     loanAmount: parseFloat(document.getElementById('amount').value),
     totalAmount: parseFloat(document.getElementById('totalAmount').value),
@@ -234,8 +234,8 @@
 
       } else {
         details.innerHTML = `
-          <p style="color: orange;"><strong>No valid home loan found.</strong></p>
-          <h3>Apply for Home Loan</h3>
+          <p style="color: orange;"><strong>No valid vehicle loan found.</strong></p>
+          <h3>Apply for Vehicle Loan</h3>
           <form id="applyForm">
             <label>Loan Amount (₹):</label><br/>
             <input type="number" id="amount" required><br/><br/>
@@ -350,7 +350,7 @@
   
           const payload = {
             userId: +userId,
-            loanType: 'HOME',
+            loanType: 'VEHICLE',
             reason: document.getElementById('reason').value,
             loanAmount: parseFloat(document.getElementById('amount').value),
             totalAmount: parseFloat(document.getElementById('totalAmount').value),

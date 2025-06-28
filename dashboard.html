@@ -7,11 +7,24 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dashboard-page">
+
+
   <div class="dashboard-wrapper">
+
+
+
+    
     <!-- Main Content -->
     <main class="dashboard-main">
       <h2>Welcome, <span id="userName">User</span></h2>
       <h3>Available Loan Schemes</h3>
+
+
+      <!-- User Profile Button -->
+<!-- Profile Icon Widget (Top-right corner) -->
+<!-- Top-right Profile Icon -->
+
+
 
       <div class="loan-cards">
         <div class="loan-card" onclick="location.href='home_loan.html'">
@@ -49,6 +62,15 @@
       </section> -->
 
       <button class="btn-logout" onclick="logout()">Logout</button>
+
+      <script>
+        function logout() {
+          // localStorage.removeItem('token');
+          // localStorage.removeItem('userId');
+          window.location.href = 'index.html'; // or your login page
+        }
+      </script>
+      
     </main>
 
     <!-- Sidebar Menu -->
@@ -64,7 +86,9 @@
       </nav>
     </aside>
   </div>
-
+  <script src="config.js"></script>
   <script src="dashboard.js"></script>
+
+  
 </body>
 </html>
