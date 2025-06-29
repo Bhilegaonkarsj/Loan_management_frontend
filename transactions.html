@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Transaction Summary</title>
+  <script src="config.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -145,7 +147,7 @@
       renderTable(allTxns);
     }
 
-    fetch("http://localhost:8080/api/payments/transactions/summary", {
+    fetch(BASE_URL+"api/payments/transactions/summary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

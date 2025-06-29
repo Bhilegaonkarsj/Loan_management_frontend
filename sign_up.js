@@ -12,7 +12,7 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
       occupation: document.getElementById("occupation").value
     };
   
-    fetch("http://localhost:8080/api/user/signup", {
+    fetch(BASE_URL+"api/user/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

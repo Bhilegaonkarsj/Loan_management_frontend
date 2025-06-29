@@ -3,7 +3,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
   const userId = parseInt(document.getElementById("userId").value);
 
-  fetch("http://localhost:8080/api/user/login", {
+  fetch(BASE_URL+"api/user/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

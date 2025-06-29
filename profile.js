@@ -7,7 +7,7 @@ profileIcon.addEventListener("click", () => {
   const isVisible = profileDropdown.style.display === "block";
 
   if (!isVisible) {
-    fetch("http://localhost:8080/api/user/details", {
+    fetch(BASE_URL+"api/user/details", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

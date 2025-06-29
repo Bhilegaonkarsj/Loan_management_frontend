@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-  fetch("http://localhost:8080/api/user/details", {
+  fetch(BASE_URL+"api/user/details", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Fetch user details
-  fetch("http://localhost:8080/api/user/details", {
+  fetch(BASE_URL+"api/user/details", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

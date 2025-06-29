@@ -18,6 +18,7 @@
 
       <input type="file" id="profileUpload" accept="image/*" />
 
+      <script src="config.js"></script>
 
       <script>
         document.getElementById("profileUpload").addEventListener("change", function () {
@@ -39,7 +40,7 @@
           const userId = localStorage.getItem("userId");
           const token = localStorage.getItem("token");
       
-          fetch("http://localhost:8080/api/user/save/image", {
+          fetch(BASE_URL+"api/user/save/image", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -79,7 +80,7 @@
     const userId = localStorage.getItem("userId");
 
     // Fetch user details
-    fetch("http://localhost:8080/api/user/details", {
+    fetch(BASE_URL+"api/user/details", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

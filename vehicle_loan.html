@@ -19,6 +19,7 @@
       <!-- your sidebar content -->
     </aside>
   </div>
+  <script src="config.js"></script>
 
   <script>document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
@@ -26,7 +27,7 @@
     const details = document.getElementById('loanDetails');
     console.log("userId in vehicle loan check :" + userId);
   
-    fetch('http://localhost:8080/api/loans/check', {
+    fetch(BASE_URL+'api/loans/check', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -111,7 +112,7 @@
   const container = document.getElementById('statementContainer');
   container.innerHTML = '<p>Loading statement...</p>';
 
-  fetch('http://localhost:8080/api/payments/summary', {
+  fetch(BASE_URL+'api/payments/summary', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -166,7 +167,7 @@
   
 
 
-        fetch('http://localhost:8080/api/user/accounts', {
+        fetch(BASE_URL+'api/user/accounts', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -212,7 +213,7 @@
 
   };
 
-  fetch('http://localhost:8080/api/loans/apply', {
+  fetch(BASE_URL+'api/loans/apply', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -313,7 +314,7 @@
 // });
 
 
-        fetch('http://localhost:8080/api/user/accounts', {
+        fetch(BASE_URL+'api/user/accounts', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -358,7 +359,7 @@
 
           };
   
-          fetch('http://localhost:8080/api/loans/apply', {
+          fetch(BASE_URL+'api/loans/apply', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
