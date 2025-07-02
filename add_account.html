@@ -3,40 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Add Bank Account</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Accounts Dashboard</title>
+  <style>
+    .container { max-width: 600px; margin: auto; }
+    .form-container { margin-top: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-weight: bold; }
+    input { width: 100%; padding: 6px; }
+    .account-item { background: #f0f0f0; margin: 10px 0; padding: 10px; border-radius: 5px; }
+  </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Add Bank Account</h2>
-    <form id="addAccountForm">
- 
+  <div class="container">
+    <h2>Your Bank Accounts</h2>
+    <div id="accountsList">Loading...</div>
 
-      <div class="form-group">
-        <label for="accountNumber">Account Number</label>
-        <input type="text" id="accountNumber" required />
-      </div>
+    <button id="showFormBtn" style="margin-top: 20px;">Add New Account</button>
 
-      <div class="form-group">
-        <label for="initialBalance">Initial Balance</label>
-        <input type="number" id="initialBalance" required />
-      </div>
-
-      <div class="form-group">
-        <label for="currency">Currency</label>
-        <input type="text" id="currency" value="INR" required />
-      </div>
-
-      <div class="form-group">
-        <label for="bankId">Bank ID</label>
-        <input type="number" id="bankId" required />
-      </div>
-
-      <button type="submit">Create Account</button>
-      <div class="error" id="error" style="color: red; margin-top: 10px;"></div>
-    </form>
+    <div class="form-container" id="accountForm" style="display: none;">
+      <h3>Add Bank Account</h3>
+      <form id="addAccountForm">
+        <div class="form-group">
+          <label for="accountNumber">Account Number</label>
+          <input type="text" id="accountNumber" required />
+        </div>
+        <div class="form-group">
+          <label for="initialBalance">Initial Balance</label>
+          <input type="number" id="initialBalance" required />
+        </div>
+        <div class="form-group">
+          <label for="currency">Currency</label>
+          <input type="text" id="currency" value="INR" required />
+        </div>
+        <div class="form-group">
+          <label for="bankId">Bank ID</label>
+          <input type="number" id="bankId" required />
+        </div>
+        <button type="submit">Create Account</button>
+        <div class="error" id="error" style="color: red; margin-top: 10px;"></div>
+      </form>
+    </div>
   </div>
+  <script src="config.js"></script>
 
-  <script src="add_account.js"></script>
+  <script>
+    // 1. Load accounts on page load
+    function loadAccounts() {
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
+
+      if (!userId || !token) {
+        document.getElementById("accountsList").innerHTML = "<p>Please log in to view accounts.</p>";
+        return;
+      }
+
+      fetch(BASE_URL+"api/user/accounts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "userId": userId,
+          "token": token
+        },
+        body: JSON.stringify({ userId: parseInt(userId) })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const accountsList = document.getElementById("accountsList");
+        accountsList.innerHTML = "";
+
+        const accountNumbers = data.data?.accountsList;
+        if (accountNumbers && accountNumbers.length > 0) {
+          accountNumbers.forEach(acc => {
+            const div = document.createElement("div");
+            div.className = "account-item";
+            div.innerHTML = `<p><strong>Account Number:</strong> ${acc}</p>`;
+            accountsList.appendChild(div);
+          });
+        } else {
+          accountsList.innerHTML = "<p>No accounts found for this user.</p>";
+        }
+      })
+      .catch(err => {
+        document.getElementById("accountsList").innerText = "Failed to load accounts: " + err.message;
+      });
+    }
+
+    // 2. Add Account Form Submission
+    document.getElementById("addAccountForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
+
+      if (!userId || !token) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const payload = {
+        userId: parseInt(userId),
+        accountNumber: document.getElementById("accountNumber").value.trim(),
+        accountBalance: parseFloat(document.getElementById("initialBalance").value),
+        currency: document.getElementById("currency").value.trim(),
+        bankId: parseInt(document.getElementById("bankId").value)
+      };
+
+      fetch(BASE_URL+"api/user/add/account", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "userId": userId,
+          "token": token
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.data === "User Accounts Created") {
+          alert("Account created successfully!");
+          document.getElementById("addAccountForm").reset();
+          document.getElementById("accountForm").style.display = "none";
+          loadAccounts(); // refresh list
+        } else {
+          document.getElementById("error").innerText = data.message || "Unexpected error.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("error").innerText = "Account creation failed: " + err.message;
+      });
+    });
+
+    // 3. On window load
+    window.onload = function () {
+      loadAccounts();
+
+      document.getElementById("showFormBtn").addEventListener("click", function () {
+        const form = document.getElementById("accountForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      });
+    };
+  </script>
 </body>
 </html>
